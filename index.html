@@ -13,6 +13,7 @@
       align-items: center;
       background-color: #121212;
       color: white;
+      user-select: none;
     }
 
     h1 {
@@ -52,6 +53,44 @@
     #restartBtn:hover {
       background-color: #00cc77;
     }
+
+    /* Tombol kontrol */
+    #controls {
+      display: grid;
+      grid-template-columns: 60px 60px 60px;
+      grid-template-rows: 60px 60px 60px;
+      gap: 10px;
+      margin-top: 25px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .ctrl-btn {
+      width: 60px;
+      height: 60px;
+      background-color: #00ff99;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 10px #00ff99;
+    }
+
+    .ctrl-btn:active {
+      background-color: #00cc77;
+      transform: scale(0.95);
+    }
+
+    /* Posisi tombol panah */
+    #up    { grid-column: 2; grid-row: 1; }
+    #left  { grid-column: 1; grid-row: 2; }
+    #right { grid-column: 3; grid-row: 2; }
+    #down  { grid-column: 2; grid-row: 3; }
   </style>
 </head>
 <body>
@@ -61,6 +100,14 @@
   </div>
   <div id="score">Skor: 0</div>
   <button id="restartBtn" onclick="startGame()">Mulai Ulang</button>
+
+  <!-- Tombol Kontrol -->
+  <div id="controls">
+    <button id="up" class="ctrl-btn">⬆️</button>
+    <button id="left" class="ctrl-btn">⬅️</button>
+    <button id="right" class="ctrl-btn">➡️</button>
+    <button id="down" class="ctrl-btn">⬇️</button>
+  </div>
 
   <script>
     const canvas = document.getElementById("gameCanvas");
@@ -104,7 +151,6 @@
         this.body[0] = { x: 10 * scale, y: 10 * scale };
         this.xSpeed = scale;
         this.ySpeed = 0;
-        this.total = 0;
       }
 
       draw() {
@@ -153,11 +199,8 @@
       }
 
       eat(fruit) {
-        if (
-          this.body[0].x === fruit.x &&
-          this.body[0].y === fruit.y
-        ) {
-          this.body.push({}); // Add dummy part
+        if (this.body[0].x === fruit.x && this.body[0].y === fruit.y) {
+          this.body.push({});
           return true;
         }
         return false;
@@ -166,7 +209,6 @@
       checkCollision() {
         const head = this.body[0];
 
-        // Wall collision
         if (
           head.x >= canvas.width ||
           head.x < 0 ||
@@ -177,7 +219,6 @@
           startGame();
         }
 
-        // Self collision
         for (let i = 1; i < this.body.length; i++) {
           if (head.x === this.body[i].x && head.y === this.body[i].y) {
             alert("Game Over! Skor: " + score);
@@ -204,12 +245,19 @@
       }
     }
 
+    // Keyboard control
     window.addEventListener("keydown", (evt) => {
       const direction = evt.key.replace("Arrow", "");
       snake.changeDirection(direction);
     });
 
-    // Start on load
+    // Tombol kontrol sentuh
+    document.getElementById("up").addEventListener("click", () => snake.changeDirection("Up"));
+    document.getElementById("down").addEventListener("click", () => snake.changeDirection("Down"));
+    document.getElementById("left").addEventListener("click", () => snake.changeDirection("Left"));
+    document.getElementById("right").addEventListener("click", () => snake.changeDirection("Right"));
+
+    // Mulai otomatis
     startGame();
   </script>
 </body>
